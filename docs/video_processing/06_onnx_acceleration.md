@@ -452,6 +452,7 @@ while True:
         frame_actions.extend(actions)
     
     # Visualize
+    y = 30
     for act in set(frame_actions):
         cv2.putText(frame, f"ACTION: {act}", (10, y),
                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
