@@ -25,7 +25,7 @@ ENABLE_FACIAL_EMOTION = True  # Set to False to disable for max performance
 
 # Audio Settings
 SAMPLE_RATE = 16000          # 16 kHz
-VOICE_CHUNK_SECONDS = 4      # record every 4 second
+VOICE_CHUNK_SECONDS = 4      # record every 4 seconds
 
 # Shared globals
 start_time = None
@@ -151,7 +151,7 @@ def detect_custom_actions(kp):
 # ================================================================
 def detect_facial_emotion(frame):
     """
-    Using DeepFace recognize your emotion in real time, return dominant emotion
+    Using DeepFace to recognize your emotion in real time, return dominant emotion
     Optimized: Called less frequently to improve performance
     """
     global current_facial_emotion
@@ -178,7 +178,7 @@ def detect_facial_emotion(frame):
 # ================================================================
 def detect_voice_emotion_simple(audio_chunk):
     """
-    An easy but accurate rule to recognize your voice emotion:
+    A simple but accurate rule to recognize your voice emotion:
     - Bigger Energy → agitated
     - Normal Energy → neutral
     - Small Energy → calm
@@ -401,7 +401,7 @@ def main():
 
         cv2.imshow("Interview V6 Optimized (High Performance)", frame)
 
-        # q to stop the programme
+        # q to stop the program
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 

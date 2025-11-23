@@ -184,6 +184,16 @@ def preprocess_frame(frame):
 
 def parse_onnx_output(outputs, original_shape, conf_threshold=0.4):
     """Parse YOLO pose ONNX output"""
+    # YOLO11 Pose output format constants
+    BBOX_START = 0
+    BBOX_END = 4
+    OBJECTNESS_IDX = 4
+    CLASS_CONF_IDX = 5
+    KEYPOINTS_START = 6
+    NUM_KEYPOINTS = 17
+    KEYPOINT_DIMS = 3  # x, y, confidence
+    INPUT_SIZE = 640
+    
     # YOLO11 Pose output: (1, 56, 8400)
     # 0-3: bbox (x, y, w, h)
     # 4: objectness score
@@ -191,19 +201,19 @@ def parse_onnx_output(outputs, original_shape, conf_threshold=0.4):
     # 6-55: 17 keypoints × 3 (x, y, confidence) = 51 values (total 56)
     
     outputs = outputs[0]  # Remove batch dimension: (56, 8400)
-    scores = outputs[4]
+    scores = outputs[OBJECTNESS_IDX]
     mask = scores > conf_threshold
     
     filtered = outputs[:, mask].T  # (N, 56) where N is number of detections
     
     detections = []
     h, w = original_shape[:2]
-    scale_x = w / 640
-    scale_y = h / 640
+    scale_x = w / INPUT_SIZE
+    scale_y = h / INPUT_SIZE
     
     for det in filtered:
         # Extract keypoints (17 keypoints, indices 6-55, but in format x,y,conf)
-        kpts_raw = det[6:].reshape(17, 3)  # (17, 3) - x, y, confidence
+        kpts_raw = det[KEYPOINTS_START:].reshape(NUM_KEYPOINTS, KEYPOINT_DIMS)  # (17, 3) - x, y, confidence
         
         # Scale keypoints back to original frame size
         keypoints = []
@@ -215,7 +225,7 @@ def parse_onnx_output(outputs, original_shape, conf_threshold=0.4):
         
         detections.append({
             'keypoints': np.array(keypoints),
-            'score': det[4]
+            'score': det[OBJECTNESS_IDX]
         })
     
     return detections
